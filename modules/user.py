@@ -25,11 +25,11 @@ def login():
         response = api_call('POST', '/login', login_data)
         
         # Debug: Print response details
-        if response:
-            print(f"Response status: {response.status_code}")
-            print(f"Response content: {response.text}")
-        else:
-            print("No response received from API")
+        # if response:
+        #     print(f"Response status: {response.status_code}")
+        #     print(f"Response content: {response.text}")
+        # else:
+        #     print("No response received from API")
         
         if response and response.status_code == 200:
             data = response.json()
