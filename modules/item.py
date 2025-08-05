@@ -36,7 +36,7 @@ def create_item():
             'name': request.form['name'],
             'price': float(request.form['price']),
             'store_id': int(request.form['store_id']),
-            'qty': int(request.form['qty'])
+            'qty': request.form['qty']
         }
         
         response = api_call('POST', '/items', item_data, headers)
