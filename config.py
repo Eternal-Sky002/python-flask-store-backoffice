@@ -1,7 +1,8 @@
 import requests
 
 # API Base URL
-API_BASE_URL = 'http://127.0.0.1:5000'
+# API_BASE_URL = 'http://127.0.0.1:5000'
+API_BASE_URL = 'https://python-flask-api-v2.onrender.com/'
 
 # Helper function to make API calls
 def api_call(method, endpoint, data=None, headers=None):
