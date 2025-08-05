@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Items - Item Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2 class="mb-0">
+            <i class="fas fa-box me-2"></i>Items
+        </h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('item.create_item') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Tambah Item
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if items %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nama Item</th>
+                            <th>Harga</th>
+                            <th>Jumlah</th>
+                            <th>Store</th>
+                            <th>Tags</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.name }}</strong>
+                            </td>
+                            <td>
+                                <span class="text-success fw-bold">Rp {{ "{:,.0f}".format(item.price) }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ item.qty }}</strong>
+                            </td>
+                            <td>
+                                {% if item.store_name %}
+                                    <span class="badge bg-success">{{ item.store_name }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No Store</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.tags %}
+                                    {% for tag in item.tags %}
+                                        <span class="badge bg-info text-dark me-1">{{ tag.name }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted">No tags</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('item.edit_item', item_id=item.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-item-btn" 
+                                            data-item-id="{{ item.id }}" data-item-name="{{ item.name }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Belum ada items</h5>
+                <p class="text-muted">Mulai dengan menambahkan item pertama Anda.</p>
+                <a href="{{ url_for('item.create_item') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Tambah Item Pertama
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus item "<span id="itemName"></span>"?</p>
+                <p class="text-danger"><small>Tindakan ini tidak dapat dibatalkan.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to all delete buttons
+    document.querySelectorAll('.delete-item-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const itemId = this.dataset.itemId;
+            const itemName = this.dataset.itemName;
+            
+            document.getElementById('itemName').textContent = itemName;
+            document.getElementById('deleteForm').action = `/items/${itemId}/delete`;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        });
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Tags - Item Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2 class="mb-0">
+            <i class="fas fa-tags me-2"></i>Tags per Store
+        </h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('tag.create_tag') }}" class="btn btn-info">
+            <i class="fas fa-plus me-1"></i>Tambah Tag
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if stores_with_tags %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Store</th>
+                            <th>Tags</th>
+                            <th>Jumlah Tags</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for store_data in stores_with_tags %}
+                        <tr>
+                            <td>
+                                <strong>{{ store_data.store.name }}</strong>
+                            </td>
+                            <td>
+                                {% if store_data.tags %}
+                                    <button type="button" class="btn btn-sm btn-outline-info view-tags-btn" 
+                                            data-store-name="{{ store_data.store.name }}"
+                                            data-tags="{{ store_data.tags_base64 }}">
+                                        <i class="fas fa-eye me-1"></i>Lihat Tags
+                                    </button>
+                                {% else %}
+                                    <span class="text-muted">Tidak ada tags</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">{{ store_data.tags|length }} tags</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-store fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Belum ada stores</h5>
+                <p class="text-muted">Mulai dengan menambahkan store pertama Anda.</p>
+                <a href="{{ url_for('store.create_store') }}" class="btn btn-info">
+                    <i class="fas fa-plus me-1"></i>Tambah Store Pertama
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tags Modal -->
+<div class="modal fade" id="tagsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tags di Store: <span id="storeName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tagsList">
+                    <!-- Tags will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to all view tags buttons
+    document.querySelectorAll('.view-tags-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const storeName = this.dataset.storeName;
+            const tagsBase64 = this.dataset.tags;
+            
+            document.getElementById('storeName').textContent = storeName;
+            
+            const tagsList = document.getElementById('tagsList');
+            try {
+                // Decode base64 to get JSON string
+                const tagsJson = atob(tagsBase64);
+                
+                const tags = JSON.parse(tagsJson);
+                
+                if (tags && tags.length > 0) {
+                    let tagsHtml = '<div class="d-flex flex-wrap gap-2">';
+                    tags.forEach(tag => {
+                        tagsHtml += '<span class="badge bg-info text-dark fs-6">' + tag.name + '</span>';
+                    });
+                    tagsHtml += '</div>';
+                    tagsList.innerHTML = tagsHtml;
+                } else {
+                    tagsList.innerHTML = '<p class="text-muted">Tidak ada tags untuk store ini.</p>';
+                }
+            } catch (e) {
+                console.error('Error parsing tags:', e);
+                console.error('Raw tags base64:', tagsBase64);
+                tagsList.innerHTML = '<p class="text-muted">Error loading tags.</p>';
+            }
+            
+            new bootstrap.Modal(document.getElementById('tagsModal')).show();
+        });
+    });
+});
+</script>
+{% endblock %} 

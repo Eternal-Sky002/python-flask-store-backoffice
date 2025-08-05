@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Item Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-3">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </h2>
+        <p class="text-muted">Selamat datang, {{ username }}! Berikut adalah ringkasan data Anda.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">
+                            <i class="fas fa-box me-2"></i>Items
+                        </h5>
+                        <h3 class="mb-0">{{ items|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-box fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('item.items') }}" class="btn btn-outline-light btn-sm mt-2">
+                    <i class="fas fa-eye me-1"></i>Lihat Items
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">
+                            <i class="fas fa-store me-2"></i>Stores
+                        </h5>
+                        <h3 class="mb-0">{{ stores|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-store fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('store.stores') }}" class="btn btn-outline-light btn-sm mt-2">
+                    <i class="fas fa-eye me-1"></i>Lihat Stores
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">
+                            <i class="fas fa-tags me-2"></i>Tags
+                        </h5>
+                        <h3 class="mb-0">{{ tags|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-tags fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('tag.tags') }}" class="btn btn-outline-light btn-sm mt-2">
+                    <i class="fas fa-eye me-1"></i>Lihat Tags
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-box me-2"></i>Recent Items
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if items %}
+                    <div class="list-group list-group-flush">
+                        {% for item in items[:5] %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ item.name }}</h6>
+                                <small class="text-muted">Rp {{ "{:,.0f}".format(item.price) }}</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">{{ item.store_name if item.store_name else 'No Store' }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if items|length > 5 %}
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('item.items') }}" class="btn btn-outline-primary btn-sm">
+                                Lihat Semua Items
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted text-center mb-0">Belum ada items</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-store me-2"></i>Recent Stores
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if stores %}
+                    <div class="list-group list-group-flush">
+                        {% for store in stores[:5] %}
+                        <div class="list-group-item">
+                            <h6 class="mb-1">{{ store.name }}</h6>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if stores|length > 5 %}
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('store.stores') }}" class="btn btn-outline-success btn-sm">
+                                Lihat Semua Stores
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted text-center mb-0">Belum ada stores</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-tags me-2"></i>Available Tags
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if tags %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in tags %}
+                        <span class="badge bg-info text-dark">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center mb-0">Belum ada tags</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

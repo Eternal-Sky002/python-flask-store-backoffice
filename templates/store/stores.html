@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Stores - Item Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2 class="mb-0">
+            <i class="fas fa-store me-2"></i>Stores
+        </h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('store.create_store') }}" class="btn btn-success">
+            <i class="fas fa-plus me-1"></i>Tambah Store
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if stores %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nama Store</th>
+                            <th>Jumlah Items</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for store in stores %}
+                        <tr>
+                            <td>
+                                <strong>{{ store.name }}</strong>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">{{ store.item_count if store.item_count else 0 }} items</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('store.edit_store', store_id=store.id) }}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            onclick="confirmDelete({{ store.id }}, '{{ store.name }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-store fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Belum ada stores</h5>
+                <p class="text-muted">Mulai dengan menambahkan store pertama Anda.</p>
+                <a href="{{ url_for('store.create_store') }}" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>Tambah Store Pertama
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus store "<span id="storeName"></span>"?</p>
+                <p class="text-danger"><small>Tindakan ini tidak dapat dibatalkan dan akan menghapus semua items yang terkait.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(storeId, storeName) {
+    document.getElementById('storeName').textContent = storeName;
+    document.getElementById('deleteForm').action = `/stores/${storeId}/delete`;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %} 
