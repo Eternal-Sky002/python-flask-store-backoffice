@@ -59,36 +59,13 @@ def create_store():
     
     if request.method == 'POST':
         headers = {'Authorization': f'Bearer {session.get("access_token")}'}
-       
-        provinsi_code = request.form['provinsi_code']
-        kabupaten_kota_code = request.form['kabupaten_kota_code']
-        kecamatan_code = request.form['kecamatan_code']
-        kelurahan_code = request.form['kelurahan_code']
 
-        # ambil nama provinsi dari provinsis yang sudah di-load
-        provinsi_name = next((provinsi['name'] for provinsi in provinsis if provinsi['code'] == provinsi_code), None)
-
-        # ambil kabupaten via API
-        kabupaten_kota_response = api_wilayah_call('GET', f'/regencies/{provinsi_code}.json')
-        kabupaten_kotas = kabupaten_kota_response.json().get('data', []) if kabupaten_kota_response else []
-        kabupaten_kota_name = next((kabupaten_kota['name'] for kabupaten_kota in kabupaten_kotas if kabupaten_kota['code'] == kabupaten_kota_code), None)
-
-        # ambil kecamatan via API
-        kecamatan_response = api_wilayah_call('GET', f'/districts/{kabupaten_kota_code}.json')
-        kecamatans = kecamatan_response.json().get('data', []) if kecamatan_response else []
-        kecamatan_name = next((kecamatan['name'] for kecamatan in kecamatans if kecamatan['code'] == kecamatan_code), None)
-
-        # ambil kelurahan via API
-        kelurahan_response = api_wilayah_call('GET', f'/villages/{kecamatan_code}.json')
-        kelurahans = kelurahan_response.json().get('data', []) if kelurahan_response else []
-        kelurahan_name = next((kelurahan['name'] for kelurahan in kelurahans if kelurahan['code'] == kelurahan_code), None)
-        
         store_data = {
             'name': request.form['name'],
-            'provinsi': provinsi_name,
-            'kabupaten_kota': kabupaten_kota_name,
-            'kecamatan': kecamatan_name,
-            'kelurahan': kelurahan_name
+            'provinsi': request.form['provinsi_code'],
+            'kabupaten_kota': request.form['kabupaten_kota_code'],
+            'kecamatan': request.form['kecamatan_code'],
+            'kelurahan': request.form['kelurahan_code']
         }
         
         response = api_call('POST', '/stores', store_data, headers)
@@ -113,35 +90,12 @@ def edit_store(store_id):
     provinsis = provinsi_response.json().get('data', []) if provinsi_response else []
     
     if request.method == 'POST':
-        provinsi_code = request.form['provinsi_code']
-        kabupaten_kota_code = request.form['kabupaten_kota_code']
-        kecamatan_code = request.form['kecamatan_code']
-        kelurahan_code = request.form['kelurahan_code']
-
-        # ambil nama provinsi dari provinsis yang sudah di-load
-        provinsi_name = next((provinsi['name'] for provinsi in provinsis if provinsi['code'] == provinsi_code), None)
-
-        # ambil kabupaten via API
-        kabupaten_kota_response = api_wilayah_call('GET', f'/regencies/{provinsi_code}.json')
-        kabupaten_kotas = kabupaten_kota_response.json().get('data', []) if kabupaten_kota_response else []
-        kabupaten_kota_name = next((kabupaten_kota['name'] for kabupaten_kota in kabupaten_kotas if kabupaten_kota['code'] == kabupaten_kota_code), None)
-
-        # ambil kecamatan via API
-        kecamatan_response = api_wilayah_call('GET', f'/districts/{kabupaten_kota_code}.json')
-        kecamatans = kecamatan_response.json().get('data', []) if kecamatan_response else []
-        kecamatan_name = next((kecamatan['name'] for kecamatan in kecamatans if kecamatan['code'] == kecamatan_code), None)
-
-        # ambil kelurahan via API
-        kelurahan_response = api_wilayah_call('GET', f'/villages/{kecamatan_code}.json')
-        kelurahans = kelurahan_response.json().get('data', []) if kelurahan_response else []
-        kelurahan_name = next((kelurahan['name'] for kelurahan in kelurahans if kelurahan['code'] == kelurahan_code), None)
-        
         store_data = {
             'name': request.form['name'],
-            'provinsi': provinsi_name,
-            'kabupaten_kota': kabupaten_kota_name,
-            'kecamatan': kecamatan_name,
-            'kelurahan': kelurahan_name
+            'provinsi': request.form['provinsi_code'],
+            'kabupaten_kota': request.form['kabupaten_kota_code'],
+            'kecamatan': request.form['kecamatan_code'],
+            'kelurahan': request.form['kelurahan_code']
         }
         
         response = api_call('PUT', f'/stores/{store_id}', store_data, headers)
@@ -156,6 +110,21 @@ def edit_store(store_id):
     store = store_response.json() if store_response else {}
     
     return render_template('store/edit_store.html', store=store, provinsis=provinsis)
+
+@store_bp.route('/stores/<int:store_id>/detail', methods=['GET', 'POST'])
+def detail_store(store_id):
+    if 'user_id' not in session:
+        return redirect(url_for('user.login'))
+    
+    headers = {'Authorization': f'Bearer {session.get("access_token")}'}
+
+    provinsi_response = api_wilayah_call('GET', '/provinces.json')
+    provinsis = provinsi_response.json().get('data', []) if provinsi_response else []
+
+    store_response = api_call('GET', f'/stores/{store_id}', headers=headers)
+    store = store_response.json() if store_response else {}
+    
+    return render_template('store/detail_store.html', store=store, provinsis=provinsis)
 
 @store_bp.route('/stores/<int:store_id>/delete', methods=['POST'])
 def delete_store(store_id):
