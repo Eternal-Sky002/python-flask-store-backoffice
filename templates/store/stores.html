@@ -39,6 +39,9 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
+                                    <a href="{{ url_for('store.detail_store', store_id=store.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     <a href="{{ url_for('store.edit_store', store_id=store.id) }}" class="btn btn-sm btn-outline-success">
                                         <i class="fas fa-edit"></i>
                                     </a>

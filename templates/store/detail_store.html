@@ -8,7 +8,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ url_for('store.stores') }}">Stores</a></li>
-                <li class="breadcrumb-item active">Edit Store</li>
+                <li class="breadcrumb-item active">Detail Store</li>
             </ol>
         </nav>
     </div>
@@ -19,22 +19,22 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="fas fa-edit me-2"></i>Edit Store
+                    <i class="fas fa-edit me-2"></i>Detail Store
                 </h5>
             </div>
             <div class="card-body">
-                <form method="POST">
+                <form>
                     <div class="mb-3">
                         <label for="name" class="form-label">
                             <i class="fas fa-store me-1"></i>Nama Store
                         </label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ store.name }}" required>
+                        <input disabled type="text" class="form-control" id="name" name="name" value="{{ store.name }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="provinsi_code" class="form-label">
                             <i class="fas fa-store me-1"></i>Provinsi
                         </label>
-                        <select class="form-select" id="provinsi_code" name="provinsi_code" required>
+                        <select disabled class="form-select" id="provinsi_code" name="provinsi_code" required>
                             <option value="">Pilih Provinsi</option>
                             {% for provinsi in provinsis %}
                                 <option value="{{ provinsi.code }}" {% if provinsi.code == store.provinsi %}selected{% endif %}>
@@ -47,7 +47,7 @@
                         <label for="kabupaten_kota_code" class="form-label">
                             <i class="fas fa-store me-1"></i>Kabupaten/Kota
                         </label>
-                        <select class="form-select" id="kabupaten_kota_code" name="kabupaten_kota_code" required>
+                        <select disabled class="form-select" id="kabupaten_kota_code" name="kabupaten_kota_code" required>
                             <option value="">Pilih Kabupaten/Kota</option>
                         </select>
                     </div>
@@ -55,7 +55,7 @@
                         <label for="kecamatan_code" class="form-label">
                             <i class="fas fa-store me-1"></i>Kecamatan
                         </label>
-                        <select class="form-select" id="kecamatan_code" name="kecamatan_code" required>
+                        <select disabled class="form-select" id="kecamatan_code" name="kecamatan_code" required>
                             <option value="">Pilih Kecamatan</option>
                         </select>
                     </div>
@@ -63,7 +63,7 @@
                         <label for="kelurahan_code" class="form-label">
                             <i class="fas fa-store me-1"></i>Kelurahan
                         </label>
-                        <select class="form-select" id="kelurahan_code" name="kelurahan_code" required>
+                        <select disabled class="form-select" id="kelurahan_code" name="kelurahan_code" required>
                             <option value="">Pilih Kelurahan</option>
                         </select>
                     </div>                    
@@ -71,9 +71,6 @@
                         <a href="{{ url_for('store.stores') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Kembali
                         </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save me-1"></i>Update Store
-                        </button>
                     </div>
                 </form>
             </div>
